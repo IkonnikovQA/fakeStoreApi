@@ -15,10 +15,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -169,3 +167,4 @@ public class SimpleApiRefactoredTests {
         Assertions.assertNotNull(token);
     }
 }
+
