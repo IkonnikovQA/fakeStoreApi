@@ -15,12 +15,10 @@ import models.fakeapiuser.swagger.JwtAuthData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.List;
-
 import static io.restassured.RestAssured.given;
 
 
@@ -307,5 +305,6 @@ public class UserTests {
                 });
         Assertions.assertTrue(users.size() >= 3);
     }
+
 
 }
