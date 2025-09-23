@@ -1,4 +1,4 @@
-package models.fakeapiuser;
+package models.fakeapiuser.swagger;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+public class Info{
 
-public class Geolocation{
+	@JsonProperty("message")
+	private String message;
 
-	@JsonProperty("lat")
-	private String lat;
-
-	@JsonProperty("long")
-	private String jsonMemberLong;
+	@JsonProperty("status")
+	private String status;
 }
