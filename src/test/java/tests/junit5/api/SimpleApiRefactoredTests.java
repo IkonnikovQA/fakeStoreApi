@@ -1,14 +1,11 @@
 package tests.junit5.api;
 
-import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import listener.CustomTpl;
-import lombok.AllArgsConstructor;
 import models.fakeapiuser.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,9 +14,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.util.*;
 import java.util.stream.Collectors;
-import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
+
 
 public class SimpleApiRefactoredTests {
 
@@ -167,4 +163,5 @@ public class SimpleApiRefactoredTests {
         Assertions.assertNotNull(token);
     }
 }
+
 
