@@ -1,10 +1,13 @@
 package tests.swaggertests;
 
+import assertions.Conditions;
+import assertions.GenericAssertableResponse;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
+import io.restassured.response.ValidatableResponse;
 import listener.CustomTpl;
 import models.fakeapiuser.swagger.FullUser;
 import models.fakeapiuser.swagger.Info;
@@ -88,24 +91,24 @@ public class UserTests {
         Assertions.assertEquals("Missing login or password", info.getMessage());
     }
 
-//    @Test
-//    public void negativeRegisterNoPasswordGenericExampleTest() {
-//        int randomNumber = Math.abs(random.nextInt());
-//        FullUser user = FullUser.builder()
-//                .login("threadQATestUser" + randomNumber)
-//                .build();
-//
-//        ValidatableResponse response = given().contentType(ContentType.JSON)
-//                .body(user)
-//                .post("/api/signup").then();
-//
-//        Info updated = new GenericAssertableResponse<Info>(response, Info.class)
-//                .should(Conditions.hasMessage("Missing login or password"))
-//                .should(Conditions.hasStatusCode(400))
-//                .asObject("info");
-//
-//        Assertions.assertEquals("Missing login or password", updated.getMessage());
-//    }
+    @Test
+    public void negativeRegisterNoPasswordGenericExampleTest() {
+        int randomNumber = Math.abs(random.nextInt());
+        FullUser user = FullUser.builder()
+                .login("threadQATestUser" + randomNumber)
+                .build();
+
+        ValidatableResponse response = given().contentType(ContentType.JSON)
+                .body(user)
+                .post("/api/signup").then();
+
+        Info updated = new GenericAssertableResponse<Info>(response, Info.class)
+                .should(Conditions.hasMessage("Missing login or password"))
+                .should(Conditions.hasStatusCode(400))
+                .asObject("info");
+
+        Assertions.assertEquals("Missing login or password", updated.getMessage());
+    }
     @Test
     public void positiveAdminAuthTest() {
         JwtAuthData authData = new JwtAuthData("admin", "admin");
