@@ -9,13 +9,11 @@ import models.fakeapiuser.Name;
 import models.fakeapiuser.UserRoot;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
@@ -150,3 +148,4 @@ public class SimpleApiTests {
 
 
 }
+
