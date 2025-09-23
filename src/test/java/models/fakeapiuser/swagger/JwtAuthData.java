@@ -1,4 +1,4 @@
-package models.fakeapiuser;
+package models.fakeapiuser.swagger;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+public class JwtAuthData{
 
-public class Geolocation{
+	@JsonProperty("username")
+	private String username;
 
-	@JsonProperty("lat")
-	private String lat;
+	@JsonProperty("password")
+	private String password;
 
-	@JsonProperty("long")
-	private String jsonMemberLong;
 }
