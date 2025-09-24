@@ -20,7 +20,7 @@ allure-results/
 allure-report/
 
 # AspectJ / Allure debug files
-ajcore.*
+ajcore.*.txt
 
 # Test coverage
 jacoco/
