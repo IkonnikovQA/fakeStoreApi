@@ -5,22 +5,30 @@ import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.response.Response;
+import listener.AdminUser;
+import listener.AdminUserResolver;
 import listener.CustomTpl;
 import models.fakeapiuser.swagger.FullUser;
 import models.fakeapiuser.swagger.Info;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import services.UserService;
 import java.util.List;
 import static utils.RandomTestData.*;
+@ExtendWith(AdminUserResolver.class)
 
 
 public  class UserNewTests {
-
     private static UserService userService;
-
+    private FullUser user;
+    @BeforeEach
+    public void initTestUser(){
+        user = getRandomUser();
+    }
 
     @BeforeAll
     public static void setUp() {
@@ -31,16 +39,14 @@ public  class UserNewTests {
     }
     @Test
     public void positiveRegisterTest() {
-        FullUser randomUser = getRandomUser();
-        userService.register(randomUser)
+        userService.register(user)
                 .should(Conditions.hasStatusCode(201))
                 .should(Conditions.hasMessage("User created"));
     }
 
     @Test
     public void positiveRegisterWithGamesTest() {
-        FullUser randomUser = getRandomUserWithGames();
-        Response response = UserNewTests.userService.register(randomUser)
+        Response response = UserNewTests.userService.register(user)
                 .should(Conditions.hasStatusCode(201))
                 .should(Conditions.hasMessage("User created"))
                 .asResponse();
@@ -60,39 +66,33 @@ public  class UserNewTests {
 
     @Test
     public void negativeRegisterLoginExistsTest() {
-        FullUser randomUser = getRandomUser();
-        userService.register(randomUser);
-        userService.register(randomUser)
+        userService.register(user);
+        userService.register(user)
                 .should(Conditions.hasStatusCode(400))
                 .should(Conditions.hasMessage("Login already exist"));
     }
 
     @Test
     public void negativeRegisterNoPasswordTest() {
-        FullUser randomUser = getRandomUser();
-        randomUser.setPass(null);
-
-        userService.register(randomUser)
+        user.setPass(null);
+        userService.register(user)
                 .should(Conditions.hasStatusCode(400))
                 .should(Conditions.hasMessage("Missing login or password"));
     }
 
     @Test
-    public void positiveAdminAuthTest() {
-        FullUser admin = getAdminUser();
+    public void positiveAdminAuthTest(@AdminUser FullUser admin) {
         String token = userService.auth(admin)
                 .should(Conditions.hasStatusCode(200))
                 .asJwt();
-
         Assertions.assertNotNull(token);
     }
 
     @Test
     public void positiveNewUserAuthTest() {
-        FullUser randomUser = getRandomUser();
-        userService.register(randomUser);
+        userService.register(user);
 
-        String token = userService.auth(randomUser)
+        String token = userService.auth(user)
                 .should(Conditions.hasStatusCode(200))
                 .asJwt();
 
@@ -101,14 +101,12 @@ public  class UserNewTests {
 
     @Test
     public void negativeAuthTest() {
-        FullUser randomUser = getRandomUser();
-        userService.auth(randomUser)
+        userService.auth(user)
                 .should(Conditions.hasStatusCode(401));
     }
 
     @Test
     public void positiveGetUserInfoTest() {
-        FullUser user = getAdminUser();
         String token = userService.auth(user).asJwt();
         userService.getUserInfo(token)
                 .should(Conditions.hasStatusCode(200));
@@ -128,11 +126,10 @@ public  class UserNewTests {
 
     @Test
     public void positiveChangeUserPassTest() {
-        FullUser randomUser = getRandomUser();
-        String oldPassword = randomUser.getPass();
-        userService.register(randomUser);
+        String oldPassword = user.getPass();
+        userService.register(user);
 
-        String token = userService.auth(randomUser).asJwt();
+        String token = userService.auth(user).asJwt();
 
         String updatedPassValue = "newpassUpdated";
 
@@ -140,9 +137,9 @@ public  class UserNewTests {
                 .should(Conditions.hasStatusCode(200))
                 .should(Conditions.hasMessage("User password successfully changed"));
 
-        randomUser.setPass(updatedPassValue);
+        user.setPass(updatedPassValue);
 
-        token = userService.auth(randomUser).should(Conditions.hasStatusCode(200)).asJwt();
+        token = userService.auth(user).should(Conditions.hasStatusCode(200)).asJwt();
 
         FullUser updatedUser = userService.getUserInfo(token).as(FullUser.class);
 
@@ -151,10 +148,8 @@ public  class UserNewTests {
 
     @Test
     public void negativeChangeAdminPasswordTest() {
-        FullUser user = getAdminUser();
-
-        String token = userService.auth(user).asJwt();
-
+        FullUser admin = getAdminUser();
+        String token = userService.auth(admin).asJwt();
         String updatedPassValue = "newpassUpdated";
         userService.updatePass(updatedPassValue, token)
                 .should(Conditions.hasStatusCode(400))
@@ -163,10 +158,8 @@ public  class UserNewTests {
 
     @Test
     public void negativeDeleteAdminTest() {
-        FullUser user = getAdminUser();
-
-        String token = userService.auth(user).asJwt();
-
+        FullUser admin = getAdminUser();
+        String token = userService.auth(admin).asJwt();
         userService.deleteUser(token)
                 .should(Conditions.hasStatusCode(400))
                 .should(Conditions.hasMessage("Cant delete base users"));
@@ -174,10 +167,8 @@ public  class UserNewTests {
 
     @Test
     public void positiveDeleteNewUserTest() {
-        FullUser randomUser = getRandomUser();
-        userService.register(randomUser);
-        String token = userService.auth(randomUser).asJwt();
-
+        userService.register(user);
+        String token = userService.auth(user).asJwt();
         userService.deleteUser(token)
                 .should(Conditions.hasStatusCode(200))
                 .should(Conditions.hasMessage("User successfully deleted"));
