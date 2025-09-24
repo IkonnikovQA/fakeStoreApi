@@ -90,7 +90,6 @@ public class UserTests {
 
         Assertions.assertEquals("Missing login or password", info.getMessage());
     }
-
     @Test
     public void negativeRegisterNoPasswordGenericExampleTest() {
         int randomNumber = Math.abs(random.nextInt());
@@ -268,7 +267,6 @@ public class UserTests {
                 .extract().jsonPath().getObject("info", Info.class);
         Assertions.assertEquals("Cant delete base users", info.getMessage());
     }
-
     @Test
     public void positiveDeleteNewUserTest() {
         int randomNumber = Math.abs(random.nextInt());
@@ -297,7 +295,8 @@ public class UserTests {
                 .then().statusCode(200)
                 .extract().jsonPath().getObject("info", Info.class);
         Assertions.assertEquals("User successfully deleted", infoDelete.getMessage());
-    }@Test
+    }
+    @Test
     public void positiveGetAllUsersTest() {
         List<String> users = given()
                 .get("/api/users")

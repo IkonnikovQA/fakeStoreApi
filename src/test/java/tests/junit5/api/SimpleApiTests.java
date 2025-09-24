@@ -1,6 +1,5 @@
 package tests.junit5.api;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import models.fakeapiuser.Address;
