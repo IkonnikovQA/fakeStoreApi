@@ -4,42 +4,30 @@ import assertions.Conditions;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.response.Response;
 import listener.CustomTpl;
 import models.fakeapiuser.swagger.FullUser;
+import models.fakeapiuser.swagger.Info;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import services.UserService;
 import java.util.List;
-import java.util.Random;
+import static utils.RandomTestData.*;
 
 
-public class UserNewTests {
+public  class UserNewTests {
 
     private static UserService userService;
-    private static Random random;
+
 
     @BeforeAll
     public static void setUp() {
         RestAssured.baseURI = "http://85.192.34.140:8080/api";
         RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter(),
                 CustomTpl.customLogFilter().withCustomTemplates());
-        random = new Random();
         userService = new UserService();
-    }
-
-    private FullUser getRandomUser() {
-        int randomNumber = Math.abs(random.nextInt());
-        return FullUser.builder()
-                .login("threadQATestUser" + randomNumber)
-                .pass("passwordCOOL")
-                .build();
-    }
-    private FullUser getAdminUser() {
-        return FullUser.builder()
-                .login("admin")
-                .pass("admin")
-                .build();
     }
     @Test
     public void positiveRegisterTest() {
@@ -49,26 +37,26 @@ public class UserNewTests {
                 .should(Conditions.hasMessage("User created"));
     }
 
-//    @Test
-//    public void positiveRegisterWithGamesTest() {
-//        FullUser randomUser = getRandomUser();
-//        Response response = userService.register(randomUser)
-//                .should(Conditions.hasStatusCode(201))
-//                .should(Conditions.hasMessage("User created"))
-//                .asResponse();
-//        Info info = response.jsonPath().getObject("info", Info.class);
-//
-//        SoftAssertions softAssertions = new SoftAssertions();
-//
-//        softAssertions.assertThat(info.getMessage())
-//                .as("Сообщение об ошибке было не верное")
-//                .isEqualTo("фейк меседж");
-//
-//        softAssertions.assertThat(response.statusCode())
-//                .as("Статус код не был 200")
-//                .isEqualTo(201);
-//        softAssertions.assertAll();
-//    }
+    @Test
+    public void positiveRegisterWithGamesTest() {
+        FullUser randomUser = getRandomUserWithGames();
+        Response response = UserNewTests.userService.register(randomUser)
+                .should(Conditions.hasStatusCode(201))
+                .should(Conditions.hasMessage("User created"))
+                .asResponse();
+        Info info = response.jsonPath().getObject("info", Info.class);
+
+        SoftAssertions softAssertions = new SoftAssertions();
+
+        softAssertions.assertThat(info.getMessage())
+                .as("Сообщение об ошибке было не верное")
+                .isEqualTo("фейк меседж");
+
+        softAssertions.assertThat(response.statusCode())
+                .as("Статус код не был 200")
+                .isEqualTo(201);
+        softAssertions.assertAll();
+    }
 
     @Test
     public void negativeRegisterLoginExistsTest() {
